@@ -1,0 +1,16 @@
+name: ServerEconSim
+main: me.becja10.ServerEconSim.ServerEconSim
+author: 10becja
+version: 1.0
+description: An economy plugin that simulates the server requesting items from players
+depend: [Vault]
+commands:
+  reloadrequests:
+    description: reloads the plugin and all configs
+    usage: /<command>
+  setrequest:
+    description: Allows for setting requests ingame. Hold the item (and amount) that you wish to make a request of.
+    usage: /<command> <amount> <base price> <1-5> (optional custom display name)
+  viewrequests:
+    description: Shows what requests are available and which you've already completed
+    usage: /<command>
