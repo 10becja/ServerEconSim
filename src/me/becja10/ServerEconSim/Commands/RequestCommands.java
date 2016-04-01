@@ -96,6 +96,34 @@ public class RequestCommands{
 			
 			sender.sendMessage(Messages.requestList(color, r.tempId, r.amount, r.displayName, r.price));
 		}
+		int timeSinceLastRefresh = (int) (System.currentTimeMillis() - ServerEconSim.lastBatch)/1000;
+		int remainingTime = ServerEconSim.timeUntilRefresh - timeSinceLastRefresh;
+		String str = (remainingTime > 0) ? "in " + generateTimeString(remainingTime) : "soon!";
+		sender.sendMessage(Messages.timeLeft(str));
 		return true;
+	}
+	
+	private static String generateTimeString(int t){
+		String ret = "";
+		if(t >= 3600)
+		{
+			int hours = t/3600;
+			int min = (t - (hours*3600))/60;
+			ret = hours + " hour";
+			ret += (hours > 1) ? "s " : " ";
+			ret += min + " minute";
+			ret += (min > 1) ? "s" : "";
+		}
+		else if(t >= 60)
+		{
+			int min = t /60;
+			ret = min + " minute";
+			ret += (min > 1) ? "s" : "";
+		}
+		else{
+			ret = t + " second";
+			if(t > 1) ret += "s";
+		}
+		return ret;
 	}
 }

@@ -1,7 +1,7 @@
 name: ServerEconSim
 main: me.becja10.ServerEconSim.ServerEconSim
 author: 10becja
-version: 1.0
+version: 1.1
 description: An economy plugin that simulates the server requesting items from players
 depend: [Vault]
 commands:

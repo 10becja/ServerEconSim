@@ -19,7 +19,7 @@ public class Request {
 		this.displayName = displayName;
 		this.amount = amount;
 		this.value = value;
-		this.price = price + priceFlux(value);
+		this.price = Math.max(1, price + priceFlux(value));
 		this.id = id;
 	}
 	

@@ -21,6 +21,7 @@ public class Messages {
 	private static Message requestHeader = new Message(prefix + ChatColor.AQUA + "These are the current requests. " + ChatColor.GREEN + "Green "
 			+ChatColor.AQUA + "requests are available to you, " + ChatColor.RED + "Red" + ChatColor.AQUA + " means you've already completed it.");
 	private static Message requestList = new Message("{0}{1}. {2} {3} for ${4}");
+	private static Message timeLeft = new Message(prefix + ChatColor.AQUA + "These requests will reset {0}.");
 	
 	public static String noPermission(){ return noPermission.getMsg();}
 	public static String reloadSuccessful(){return reloadSuccessful.getMsg();}
@@ -35,7 +36,7 @@ public class Messages {
 	public static String requestSuccessful(int amount, String item, int price, String who){return requestSuccessful.format(amount, item, price, who);}
 	public static String requestHeader(){return requestHeader.getMsg();}
 	public static String requestList(ChatColor color, int id, int amount, String item, int price){return requestList.format(color, id, amount, item, price);}
-
+	public static String timeLeft(String time){return timeLeft.format(time);}
 	
 	private static class Message{
 		String msg;

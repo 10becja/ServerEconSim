@@ -44,7 +44,7 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 	public static List<Request> requests;	
 	public static Random gen;
 	
-	private long lastBatch;
+	public static long lastBatch;
 	
 	private String configPath;
 	private FileConfiguration config;
@@ -52,7 +52,7 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 	
 	//Config Settings
 	public static List<Integer> valueFlux; private String valueFluxStr = "Value fluxuations";
-	public int timeUntilRefresh; private String timeUntilRefreshStr = "Seconds until requests are refreshed";
+	public static int timeUntilRefresh; private String timeUntilRefreshStr = "Seconds until requests are refreshed";
 	public int numRequests; private String numRequestsStr = "Number of requests";
 	public boolean broadcastRefresh; private String broadcastRefreshStr = "Broadcast new requests";
 	
@@ -229,7 +229,13 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 	
 	
 	private void checkAndSetTicker(){
-		if(System.currentTimeMillis() - lastBatch > timeUntilRefresh * 1000)
+		boolean shouldRefresh = System.currentTimeMillis() - lastBatch > timeUntilRefresh * 1000;
+		if(!shouldRefresh)
+		{
+			long timeRemaining = (timeUntilRefresh * 1000) - System.currentTimeMillis() - lastBatch;
+			shouldRefresh = timeRemaining < 60000; //if timeRemaining is less than a minute, refresh
+		}
+		if(shouldRefresh)
 		{
 			logger.info("[Server Economy] ------REQUESTS REFRESHING------");
 			if(broadcastRefresh)
