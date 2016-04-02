@@ -51,7 +51,7 @@ public class RequestCommands{
 			return true;
 		}
 		
-		ItemStack request = p.getItemInHand();
+		ItemStack request = p.getInventory().getItemInMainHand();
 		if(request == null || request.getType() == Material.AIR){
 			sender.sendMessage(Messages.noAir());
 			return true;
