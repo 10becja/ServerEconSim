@@ -38,14 +38,15 @@ public class SignEventHandler implements Listener{
 				return;
 			
 			SignManager.addSign(event.getBlock().getLocation(), rNum);
-			Request req = (rNum < ServerEconSim.requests.size()) ? ServerEconSim.requests.get(rNum) : null;
+			int reqNum = rNum - 1;
+			Request req = (reqNum < ServerEconSim.requests.size()) ? ServerEconSim.requests.get(reqNum) : null;
 			String amount = "", price = "", item = "";
 			if(req != null){
 				amount = req.amount + "";
 				price = req.price + "";
-				item = (req.displayName == "") ? req.displayName : req.item.getType().toString();
+				item = (req.displayName != "") ? req.displayName : req.item.getType().toString();
 			}
-			event.setLine(0, "[Request Board "+ rNum+"]");
+			event.setLine(0, "[Request "+ rNum+"]");
 			event.setLine(1, amount);
 			event.setLine(2, item);
 			event.setLine(3, "$"+price);

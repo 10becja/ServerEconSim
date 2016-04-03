@@ -216,7 +216,7 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 			{
 				signs.put(loc, req);
 				Sign sign = (Sign) loc.getBlock().getState();
-				sign.setLine(0, "[Request Board "+ req.tempId +"]");
+				sign.setLine(0, "[Request "+ req.tempId +"]");
 				sign.setLine(1, req.amount + "");
 				sign.setLine(2, req.displayName);
 				sign.setLine(3, "$" + req.price);
@@ -232,7 +232,7 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 		boolean shouldRefresh = System.currentTimeMillis() - lastBatch > timeUntilRefresh * 1000;
 		if(!shouldRefresh)
 		{
-			long timeRemaining = (timeUntilRefresh * 1000) - System.currentTimeMillis() - lastBatch;
+			long timeRemaining = (timeUntilRefresh * 1000) - (System.currentTimeMillis() - lastBatch);
 			shouldRefresh = timeRemaining < 60000; //if timeRemaining is less than a minute, refresh
 		}
 		if(shouldRefresh)
