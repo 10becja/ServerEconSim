@@ -13,6 +13,7 @@ public class Request {
 	public int value;
 	public int id;
 	public int tempId;
+	public int timesBought;
 	
 	public Request(ItemStack item, String displayName, int amount, int price, int value, int id){
 		this.item = item;

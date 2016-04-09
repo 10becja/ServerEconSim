@@ -140,8 +140,6 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 					RequestManager.reloadRequests();
 					SignManager.reloadSigns();
 					loadConfig();
-					pickRequests(5);
-					initalizeSigns();
 					sender.sendMessage(Messages.reloadSuccessful());
 				}
 				return true;
@@ -149,6 +147,12 @@ public class ServerEconSim extends JavaPlugin implements Listener{
 				return RequestCommands.setRequest(sender, args);
 			case "viewrequests":
 				return RequestCommands.viewRequests(sender);
+			case "listrequests":
+				return RequestCommands.listRequests(sender, args);
+			case "requestdetails":
+				return RequestCommands.requestDetails(sender, args);
+			case "editrequest":
+				return RequestCommands.editRequest(sender, args);
 		}
 		return true;
 	}

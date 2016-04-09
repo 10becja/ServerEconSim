@@ -1,5 +1,7 @@
 package me.becja10.ServerEconSim.Commands;
 
+import java.util.List;
+
 import me.becja10.ServerEconSim.ServerEconSim;
 import me.becja10.ServerEconSim.Utils.Messages;
 import me.becja10.ServerEconSim.Utils.PlayerData;
@@ -100,6 +102,156 @@ public class RequestCommands{
 		int remainingTime = ServerEconSim.timeUntilRefresh - timeSinceLastRefresh;
 		String str = (remainingTime > 0) ? "in " + generateTimeString(remainingTime) : "soon!";
 		sender.sendMessage(Messages.timeLeft(str));
+		return true;
+	}
+	
+	public static boolean listRequests(CommandSender sender, String[] args)
+	{
+		if(sender instanceof Player && !sender.hasPermission("ses.listrequests"))
+		{
+			sender.sendMessage(Messages.noPermission());
+		}
+		else{
+			String arg1 = (args.length > 0) ? args[0] : "";
+			String arg2 = (args.length > 1) ? args[1] : "";
+			
+			int page = 1;
+			boolean arg1IsPage = true;
+			try{ //see if arg1 is the page number
+				page = Integer.parseInt(arg1);
+			}
+			catch(NumberFormatException ex){
+				arg1IsPage = false;
+				try{
+					page = Integer.parseInt(arg2);
+				}
+				catch(NumberFormatException ex1){
+					
+				}
+			}
+			List<Request> allReqs = RequestManager.getAllRequests();
+			
+			String filter = (arg1IsPage) ? "" : arg1;
+			
+			int start = Math.max(0, 10*(page-1));
+			int end = Math.min(start + 10, allReqs.size());
+			
+			sender.sendMessage(ChatColor.AQUA + "Requests page " + page);
+			sender.sendMessage(ChatColor.AQUA + "-----------------------------");
+			for(int i = start; i < end; i++){
+				Request req = allReqs.get(i);
+				if(filter == "" || req.displayName.toLowerCase().contains(filter.toLowerCase())){
+					String temp = ChatColor.GREEN + ""+ req.id + ". ";
+					temp += ChatColor.BLUE + req.displayName + " ";
+					temp += ChatColor.GOLD + "amount: " + ChatColor.BLUE + req.amount + " ";
+					temp += ChatColor.GOLD + "price: " + ChatColor.BLUE + req.price + " ";
+					temp += ChatColor.GOLD + "flux: " + ChatColor.BLUE + req.value + " ";
+					
+					sender.sendMessage(temp);
+				}	
+			}			
+		}
+		return true;
+	}
+	
+	public static boolean requestDetails(CommandSender sender, String[] args){
+		
+		if(sender instanceof Player && !sender.hasPermission("ses.requestdetails")){
+			sender.sendMessage(Messages.noPermission());
+		}
+		else{
+			if(args.length != 1)
+				return false;
+			int id = 1;
+			try {
+				id = Integer.parseInt(args[0]);
+			}catch(NumberFormatException ex){
+				sender.sendMessage(Messages.nan());
+				return false;
+			}
+			Request req = RequestManager.getRawRequest(id);
+			if(req != null){
+				sender.sendMessage(ChatColor.AQUA + "Request Details");
+				sender.sendMessage(ChatColor.AQUA + "-----------------------------");
+				String item =  Serializer.toString(req.item);
+				sender.sendMessage(ChatColor.GREEN + "Id: " + ChatColor.BLUE + req.id);
+				sender.sendMessage(ChatColor.GREEN + "Item: " + ChatColor.BLUE + item);
+				sender.sendMessage(ChatColor.GREEN + "Amount: " + ChatColor.BLUE + req.amount);
+				sender.sendMessage(ChatColor.GREEN + "Price: " + ChatColor.BLUE + req.price);
+				sender.sendMessage(ChatColor.GREEN + "Flux Value: " + ChatColor.BLUE + req.value);
+				sender.sendMessage(ChatColor.GREEN + "Times Bought: " + ChatColor.BLUE + req.timesBought);				
+			}
+			else{
+				sender.sendMessage(Messages.prefix + ChatColor.RED + "A request with that ID could not be found. Use /listrequests to see all available requests.");
+			}
+		}
+		return true;
+	}
+	
+	public static boolean editRequest(CommandSender sender, String[] args) {
+		
+		if(!(sender instanceof Player))
+		{
+			sender.sendMessage(Messages.playersOnly());
+			return true;
+		}
+		Player p = (Player) sender;
+		
+		if(!p.hasPermission("ses.setrequest"))
+		{
+			sender.sendMessage(Messages.noPermission());
+			return true;
+		}
+		
+		if(args.length < 4)
+			return false;
+		
+		int id = 0;
+		int amount = 0;
+		int price = 0;
+		int value = 0;
+		try{
+			id = Integer.parseInt(args[0]);
+			amount = Integer.parseInt(args[1]);
+			price = Integer.parseInt(args[2]);
+			value = Integer.parseInt(args[3]);
+		} catch(NumberFormatException ex){
+			sender.sendMessage(Messages.nan());
+			return false;
+		}
+		
+		if(amount <= 0 || price <= 0 || value < 0 || value > 5)
+		{
+			sender.sendMessage(Messages.invalid());
+			return true;
+		}
+		
+		ItemStack request = p.getInventory().getItemInMainHand();
+		if(request == null || request.getType() == Material.AIR){
+			sender.sendMessage(Messages.noAir());
+			return true;
+		}
+		
+		String display = "";
+		if(args.length > 4)
+			for(int i = 4; i < args.length; i++){
+				display += args[i];
+			}
+		else
+			display = request.getType().toString();
+		
+		ItemStack dummy = new ItemStack(request);
+		dummy.setAmount(1);
+		
+		String itemString = Serializer.toString(dummy);
+		
+		if(RequestManager.editRequest(id, itemString, display, amount, price, value)){
+			sender.sendMessage(Messages.prefix + ChatColor.GREEN + "Successfully updated request " + id);
+		}
+		else{
+			sender.sendMessage(Messages.prefix + ChatColor.RED + "Failed to update request " + id);
+		}
+
 		return true;
 	}
 	

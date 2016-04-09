@@ -2,6 +2,8 @@ package me.becja10.ServerEconSim.Utils;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import me.becja10.ServerEconSim.ServerEconSim;
 
@@ -77,9 +79,41 @@ public class RequestManager {
 		saveRequests();
 		return ret;
 	}
+	
+	public static boolean editRequest(int id, String itemString, String display, int amount, int price, int value ){
+		String str = "requests." + id;
+		if(config.contains(str)){
+			config.set(str + ".item", itemString);
+			config.set(str + ".displayName", display);
+			config.set(str + ".amount", amount);
+			config.set(str + ".price", price);
+			config.set(str+ ".value", value);
+			config.set(str + ".timesBought", 0);
+			saveRequests();
+			return true;
+		}
+		return false;
+	}
 
 	public static int getTotalRequests() {
 		return (config.getConfigurationSection("requests") != null) ? config.getConfigurationSection("requests").getKeys(false).size() : 0;
+	}
+	
+	public static List<Request> getAllRequests(){
+		List<Request> ret = new ArrayList<Request>();
+		for(String key : config.getConfigurationSection("requests").getKeys(false))
+		{
+			int id = 0;
+			try{
+				id = Integer.parseInt(key);
+			}
+			catch(NumberFormatException ex)
+			{
+				continue;
+			}
+			ret.add(getRawRequest(id));
+		}
+		return ret;
 	}
 
 	public static Request getRequest(int id) {
@@ -93,6 +127,24 @@ public class RequestManager {
 					config.getInt(str + ".price", 0),
 					config.getInt(str + ".value", 0),
 					id);
+		}
+		return ret;
+	}
+	
+	public static Request getRawRequest(int id){
+		Request ret = null;
+		String str = "requests." + id;
+		if(config.contains(str))
+		{
+			ItemStack item = Serializer.toItemStack(config.getString(str + ".item", ""));
+			ret = new Request(item, config.getString(str + ".displayName", ""),
+					config.getInt(str + ".amount", 0),
+					9999,
+					config.getInt(str + ".value", 0),
+					id);
+			ret.price = config.getInt(str + ".price", 0);
+			ret.timesBought = config.getInt(str+".timesBought", 0);
+			
 		}
 		return ret;
 	}
