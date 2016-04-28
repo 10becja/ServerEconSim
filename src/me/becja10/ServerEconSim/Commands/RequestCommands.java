@@ -92,8 +92,9 @@ public class RequestCommands{
 			Boolean completedAlready = false;
 			if(sender instanceof Player)
 			{
+				
 				PlayerData pd = ServerEconSim.players.get(((Player)sender).getUniqueId());
-				if(pd != null && pd.finishedRequests.get(r.id) >= r.limit)
+				if(pd != null && pd.finishedRequests.containsKey(r.id) && pd.finishedRequests.get(r.id) >= r.limit)
 					completedAlready = true;
 			}
 			ChatColor color = (completedAlready) ? ChatColor.RED : ChatColor.GREEN;
