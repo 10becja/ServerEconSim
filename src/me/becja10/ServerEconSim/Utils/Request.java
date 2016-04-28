@@ -14,14 +14,16 @@ public class Request {
 	public int id;
 	public int tempId;
 	public int timesBought;
+	public int limit;
 	
-	public Request(ItemStack item, String displayName, int amount, int price, int value, int id){
+	public Request(ItemStack item, String displayName, int amount, int price, int value, int limit, int id){
 		this.item = item;
 		this.displayName = displayName;
 		this.amount = amount;
 		this.value = value;
 		this.price = Math.max(1, price + priceFlux(value));
 		this.id = id;
+		this.limit = limit;
 	}
 	
 	private int priceFlux(int value)

@@ -88,7 +88,7 @@ public class SignEventHandler implements Listener{
 		PlayerData pd = ServerEconSim.players.get(player.getUniqueId());
 		if(pd == null)
 			pd = new PlayerData(player.getUniqueId());
-		if(pd.finishedRequests.contains(req))
+		if(pd.finishedRequests.containsKey(req.id) && pd.finishedRequests.get(req.id) >= req.limit)
 		{
 			player.sendMessage(Messages.alreadyDone());
 			return;
@@ -109,7 +109,8 @@ public class SignEventHandler implements Listener{
 			player.updateInventory();
 			player.sendMessage(Messages.requestSuccessful(req.amount, req.displayName, req.price, "You"));
 			ServerEconSim.logger.info(Messages.requestSuccessful(req.amount, req.displayName, req.price, player.getName()));
-			pd.finishedRequests.add(req);
+			int amount = pd.finishedRequests.containsKey(req.id) ? pd.finishedRequests.get(req.id) : 0;
+			pd.finishedRequests.put(req.id, amount+1);
 			ServerEconSim.players.put(player.getUniqueId(), pd);
 			RequestManager.requestDone(req.id);
 		}		

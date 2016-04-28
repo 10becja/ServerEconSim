@@ -31,6 +31,8 @@ public class RequestManager {
 		 *     price: 
 		 *     timesBought: 
 		 *     value: <a ranking of how this request is>
+		 *     limit: <how many times this request can be done per cycle>
+		 *     
 		 */
 		if (config == null)
 			reloadRequests();
@@ -64,7 +66,7 @@ public class RequestManager {
 		config.set("nextRequestId", nextId);
 	}
 
-	public static int addRequest(String itemString, String display, int amount, int price, int value) {
+	public static int addRequest(String itemString, String display, int amount, int price, int value, int limit) {
 		
 		String str = "requests." + nextId;
 		config.set(str + ".item", itemString);
@@ -73,6 +75,7 @@ public class RequestManager {
 		config.set(str + ".price", price);
 		config.set(str+ ".value", value);
 		config.set(str + ".timesBought", 0);
+		config.set(str + ".limit", limit);
 		
 		int ret = nextId;
 		incrementId();
@@ -80,7 +83,7 @@ public class RequestManager {
 		return ret;
 	}
 	
-	public static boolean editRequest(int id, String itemString, String display, int amount, int price, int value ){
+	public static boolean editRequest(int id, String itemString, String display, int amount, int price, int value, int limit){
 		String str = "requests." + id;
 		if(config.contains(str)){
 			config.set(str + ".item", itemString);
@@ -88,7 +91,7 @@ public class RequestManager {
 			config.set(str + ".amount", amount);
 			config.set(str + ".price", price);
 			config.set(str+ ".value", value);
-			config.set(str + ".timesBought", 0);
+			config.set(str + ".limit", limit);
 			saveRequests();
 			return true;
 		}
@@ -126,6 +129,7 @@ public class RequestManager {
 					config.getInt(str + ".amount", 0),
 					config.getInt(str + ".price", 0),
 					config.getInt(str + ".value", 0),
+					config.getInt(str + ".limit", 1),
 					id);
 		}
 		return ret;
@@ -141,6 +145,7 @@ public class RequestManager {
 					config.getInt(str + ".amount", 0),
 					9999,
 					config.getInt(str + ".value", 0),
+					config.getInt(str + ".limit", 1),
 					id);
 			ret.price = config.getInt(str + ".price", 0);
 			ret.timesBought = config.getInt(str+".timesBought", 0);

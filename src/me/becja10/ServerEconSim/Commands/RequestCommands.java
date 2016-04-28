@@ -32,22 +32,24 @@ public class RequestCommands{
 			return true;
 		}
 		
-		if(args.length < 3)
+		if(args.length < 4)
 			return false;
 		
 		int amount = 0;
 		int price = 0;
 		int value = 0;
+		int limit = 1;
 		try{
 			amount = Integer.parseInt(args[0]);
 			price = Integer.parseInt(args[1]);
 			value = Integer.parseInt(args[2]);
+			limit = Integer.parseInt(args[3]);
 		} catch(NumberFormatException ex){
 			sender.sendMessage(Messages.nan());
 			return false;
 		}
 		
-		if(amount <= 0 || price <= 0 || value < 0 || value > 5)
+		if(amount <= 0 || price <= 0 || value < 0 || value > 5 || limit < 1)
 		{
 			sender.sendMessage(Messages.invalid());
 			return true;
@@ -60,8 +62,8 @@ public class RequestCommands{
 		}
 		
 		String display = "";
-		if(args.length > 3)
-			for(int i = 3; i < args.length; i++){
+		if(args.length > 4)
+			for(int i = 4; i < args.length; i++){
 				display += args[i];
 			}
 		else
@@ -72,7 +74,7 @@ public class RequestCommands{
 		
 		String itemString = Serializer.toString(dummy);
 		
-		int id = RequestManager.addRequest(itemString, display, amount, price, value);
+		int id = RequestManager.addRequest(itemString, display, amount, price, value, limit);
 		sender.sendMessage(Messages.requestAdded(id, itemString));
 
 		return true;
@@ -91,7 +93,7 @@ public class RequestCommands{
 			if(sender instanceof Player)
 			{
 				PlayerData pd = ServerEconSim.players.get(((Player)sender).getUniqueId());
-				if(pd != null && pd.finishedRequests.contains(r))
+				if(pd != null && pd.finishedRequests.get(r.id) >= r.limit)
 					completedAlready = true;
 			}
 			ChatColor color = (completedAlready) ? ChatColor.RED : ChatColor.GREEN;
@@ -146,6 +148,7 @@ public class RequestCommands{
 					temp += ChatColor.GOLD + "amount: " + ChatColor.BLUE + req.amount + " ";
 					temp += ChatColor.GOLD + "price: " + ChatColor.BLUE + req.price + " ";
 					temp += ChatColor.GOLD + "flux: " + ChatColor.BLUE + req.value + " ";
+					temp += ChatColor.GOLD + "limit: " + ChatColor.BLUE + req.limit + " ";
 					
 					sender.sendMessage(temp);
 				}	
@@ -179,6 +182,7 @@ public class RequestCommands{
 				sender.sendMessage(ChatColor.GREEN + "Amount: " + ChatColor.BLUE + req.amount);
 				sender.sendMessage(ChatColor.GREEN + "Price: " + ChatColor.BLUE + req.price);
 				sender.sendMessage(ChatColor.GREEN + "Flux Value: " + ChatColor.BLUE + req.value);
+				sender.sendMessage(ChatColor.GREEN + "Limit: " + ChatColor.BLUE + req.limit);		
 				sender.sendMessage(ChatColor.GREEN + "Times Bought: " + ChatColor.BLUE + req.timesBought);				
 			}
 			else{
@@ -203,24 +207,26 @@ public class RequestCommands{
 			return true;
 		}
 		
-		if(args.length < 4)
+		if(args.length < 5)
 			return false;
 		
 		int id = 0;
 		int amount = 0;
 		int price = 0;
 		int value = 0;
+		int limit = 1;
 		try{
 			id = Integer.parseInt(args[0]);
 			amount = Integer.parseInt(args[1]);
 			price = Integer.parseInt(args[2]);
 			value = Integer.parseInt(args[3]);
+			limit = Integer.parseInt(args[4]);
 		} catch(NumberFormatException ex){
 			sender.sendMessage(Messages.nan());
 			return false;
 		}
 		
-		if(amount <= 0 || price <= 0 || value < 0 || value > 5)
+		if(amount <= 0 || price <= 0 || value < 0 || value > 5 || limit < 1)
 		{
 			sender.sendMessage(Messages.invalid());
 			return true;
@@ -233,8 +239,8 @@ public class RequestCommands{
 		}
 		
 		String display = "";
-		if(args.length > 4)
-			for(int i = 4; i < args.length; i++){
+		if(args.length > 5)
+			for(int i = 5; i < args.length; i++){
 				display += args[i];
 			}
 		else
@@ -245,7 +251,7 @@ public class RequestCommands{
 		
 		String itemString = Serializer.toString(dummy);
 		
-		if(RequestManager.editRequest(id, itemString, display, amount, price, value)){
+		if(RequestManager.editRequest(id, itemString, display, amount, price, value, limit)){
 			sender.sendMessage(Messages.prefix + ChatColor.GREEN + "Successfully updated request " + id);
 		}
 		else{
